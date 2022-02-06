@@ -1,7 +1,9 @@
 import os
+import string
 
 from telegram import Update
 import urllib.parse
+import requests
 from pyyoutube import Api, Video, VideoListResponse
 import re
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
@@ -12,8 +14,9 @@ banned_channel_ids = ["UCF3Ez6QwZwwr_E7RZGJMW0A"]
 custom_commands = []
 pattern_watch = 'https://www.youtube.com/watch?'
 pattern_short = 'https://youtu.be/'
-#api = Api(api_key='AIzaSyDrV2GZbXpKnRY5lx0ihQE4ansupC9krQE')
-api = Api(api_key=os.getenv('API_KEY'))
+url_regex = '^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\'\(\)\*\+,;=.]+$'
+api = Api(api_key='AIzaSyDrV2GZbXpKnRY5lx0ihQE4ansupC9krQE')
+#api = Api(api_key=os.getenv('API_KEY'))
 
 
 def get_youtube_id_from_url(url):
@@ -47,9 +50,7 @@ def echo(update: Update, context: CallbackContext):
     if possible_command[0].startswith("!") in custom_commands:
         manage_custom_command(possible_command[0], possible_command[1])
         return
-
-    handle_videos(message, context, update)
-
+    handle_videos(message, context, update)    
 
 def manage_command(command, message):
     return
@@ -58,18 +59,34 @@ def manage_command(command, message):
 def manage_custom_command(command, message):
     return
 
+def get_url_from_shortener(update: Update, context: CallbackContext , message: string):
+    if 'https' not in message or 'http' not in message:
+        message = 'https://'+message
+    try:
+        return requests.head(message).headers['location']
+    except:
+        return message
+
+def is_youtube_url(message):
+    return re.match(pattern_watch, message) or re.match(pattern_short, message)
+
+def is_url(message):
+    return re.match(url_regex, message)
 
 def handle_videos(full_message, context: CallbackContext, update: Update):
     splitted_message = full_message.split(" ")
     for message in splitted_message:
-        if re.match(pattern_watch, str(message)) or re.match(pattern_short, str(message)):
+        if not is_url(message):
+            continue
+        message = get_url_from_shortener(update, context, message)
+        if is_youtube_url(message):
             youtube_id = get_youtube_id_from_url(message)
             video_by_id: VideoListResponse = api.get_video_by_id(video_id=youtube_id)
             video: Video = video_by_id.items[0]
             channel_id = video.snippet.channelId
             if channel_id in banned_channel_ids:
                 context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
-                context.bot.send_message(chat_id=update.effective_chat.id, text=str("Estos videos no se admiten aqui :("))
+                context.bot.send_message(chat_id=update.effective_chat.id, text=str("F"))
     return
 
 
@@ -78,8 +95,8 @@ def handle_banned_videos(message):
 
 
 def main():
-    #TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"
-    TOKEN = os.getenv('BOT_TOKEN')
+    TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"
+    #TOKEN = os.getenv('BOT_TOKEN')
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
 
