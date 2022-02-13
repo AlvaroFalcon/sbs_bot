@@ -47,12 +47,13 @@ def echo(update: Update, context: CallbackContext):
         manage_command(possible_command[0], possible_command[1])
         return
 
-    if possible_command[0].startswith("!") in custom_commands:
-        manage_custom_command(possible_command[0], possible_command[1])
-        return
-    handle_videos(message, context, update)    
+    handle_splitted_message(message, context, update)    
 
 def manage_command(command, message):
+    if command in commands:
+        return
+    if command in custom_commands:
+        return
     return
 
 
@@ -60,10 +61,11 @@ def manage_custom_command(command, message):
     return
 
 def get_url_from_shortener(update: Update, context: CallbackContext , message: string):
-    if 'https' not in message or 'http' not in message:
-        message = 'https://'+message
+    if 'https' not in message and 'http' not in message:
+        message = 'http://'+message
     try:
-        return requests.head(message).headers['location']
+        response = requests.get(message)
+        return response.url
     except:
         return message
 
@@ -71,9 +73,10 @@ def is_youtube_url(message):
     return re.match(pattern_watch, message) or re.match(pattern_short, message)
 
 def is_url(message):
-    return re.match(url_regex, message)
+    is_match = re.match(re.compile(url_regex), message)
+    return is_match is not None
 
-def handle_videos(full_message, context: CallbackContext, update: Update):
+def handle_splitted_message(full_message, context: CallbackContext, update: Update):
     splitted_message = full_message.split(" ")
     for message in splitted_message:
         if not is_url(message):
