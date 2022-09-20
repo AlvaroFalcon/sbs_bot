@@ -18,19 +18,16 @@ def echo(update: Update, context: CallbackContext):
     
     possible_command = message.split(" ")    
     if command_manager.is_command(possible_command[0]):
-        command_manager.manage_command(possible_command[0], possible_command[1], context, update)
+        command_manager.manage_command(possible_command[0], possible_command, context, update)
         return
 
     handle_splitted_message(message, context, update)
 
 def handle_splitted_message(full_message, context: CallbackContext, update: Update):        
     splitted_message = url_utils.formatTextToOneLine(full_message)
-    print("FORMATED "+splitted_message)
     splitted_message = splitted_message.split(" ")
-    print(splitted_message)
     for message in splitted_message:
         if not url_utils.is_url(message.strip()):
-            print("not url "+message)
             continue
         message = url_utils.get_url_from_shortener(message)
         if youtube_utils.is_youtube_url(message):

@@ -1,9 +1,6 @@
-my_str = """\
-First line
-Second line
-Third line
-"""
+import requests
 
-result = " ".join(line.strip() for line in my_str.splitlines())
-
-print(eval(repr(result)))
+async def get_waifu_image():
+    response = await(requests.get("https://api.waifu.pics/sfw/waifu"))
+    print(response.url)
+    print(response.json())
