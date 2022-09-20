@@ -1,8 +1,9 @@
-from url_utils import url_utils_tests
+my_str = """\
+First line
+Second line
+Third line
+"""
 
-def start_tests():
-    url_utils_tests.url_utils_tests()
-    print("Tests finished")
-    return
+result = " ".join(line.strip() for line in my_str.splitlines())
 
-start_tests()
+print(eval(repr(result)))

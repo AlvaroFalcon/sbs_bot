@@ -1,10 +1,10 @@
 import os
 import string
 from telegram import Update
-import command_manager
+from command_manager import command_manager
+from url_utils import url_utils
 import urllib.parse
-import url_utils
-import youtube_utils
+from youtube_utils import youtube_utils
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
 
 def start(update, context):
@@ -14,20 +14,25 @@ def inmersion(update, context):
     context.bot.send_photo(update.message.chat_id, photo=open('inmersion.jpg', 'rb'))
 
 def echo(update: Update, context: CallbackContext):
-    message = update.message.text
-    possible_command = message.split(" ")
-    if command_manager.is_command():
-        command_manager.manage_command(possible_command[0], possible_command[1])
+    message: str = update.message.text
+    
+    possible_command = message.split(" ")    
+    if command_manager.is_command(possible_command[0]):
+        command_manager.manage_command(possible_command[0], possible_command[1], context, update)
         return
 
     handle_splitted_message(message, context, update)
 
-def handle_splitted_message(full_message, context: CallbackContext, update: Update):
-    splitted_message = full_message.split(" ")
+def handle_splitted_message(full_message, context: CallbackContext, update: Update):        
+    splitted_message = url_utils.formatTextToOneLine(full_message)
+    print("FORMATED "+splitted_message)
+    splitted_message = splitted_message.split(" ")
+    print(splitted_message)
     for message in splitted_message:
-        if not url_utils.is_url(message):
+        if not url_utils.is_url(message.strip()):
+            print("not url "+message)
             continue
-        message = url_utils.get_url_from_shortener(update, context, message)
+        message = url_utils.get_url_from_shortener(message)
         if youtube_utils.is_youtube_url(message):
             youtube_utils.manage_youtube_vid(message, context, update)
     return

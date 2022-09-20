@@ -26,5 +26,8 @@ def manage_youtube_vid(url, context, update):
     video: Video = video_by_id.items[0]
     channel_id = video.snippet.channelId
     if channel_id in banned_channel_ids:
-        context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
-        context.bot.send_message(chat_id=update.effective_chat.id, text=str("F"))    
+        try:
+            context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
+            context.bot.send_message(chat_id=update.effective_chat.id, text=str("https://www.youtube.com/watch?v=dQw4w9WgXcQ"))                
+        except:
+            print("Trying to delete an empty message")

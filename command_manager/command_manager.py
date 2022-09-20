@@ -1,7 +1,8 @@
-commands = ["warn"]
+
+commands = ["!warn", "!waifu"]
 custom_commands = []
 
-def manage_command(command, message):
+def manage_command(command, message, update, context):
     if command in commands:
         return
     if command in custom_commands:
@@ -9,4 +10,7 @@ def manage_command(command, message):
     return
 
 def is_command(text: str):
-    return text.split(" ")[0].startswith("!") in commands
+    command = text.strip().split(" ")[0]
+    if not command.startswith("!"):
+     return False
+    return command in commands
