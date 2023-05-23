@@ -28,6 +28,7 @@ def handle_splitted_message(full_message, context: CallbackContext, update: Upda
     splitted_message = splitted_message.split(" ")
     for message in splitted_message:
         if not url_utils.is_url(message.strip()):
+            print("not url")
             continue
         message = url_utils.get_url_from_shortener(message)
         if youtube_utils.is_youtube_url(message):

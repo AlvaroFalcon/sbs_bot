@@ -6,7 +6,8 @@ url_regex = '^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\'\(\
 
 def is_url(message):
     is_match = re.match(re.compile(url_regex), message)
-    return is_match is not None
+    print(is_match)
+    return is_match is not None or "http" in message
 
 def get_url_from_shortener(message):
     messageCopy = str(message)
