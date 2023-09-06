@@ -1,6 +1,6 @@
 from . import waifu_manager
 
-commands = ["!waifu", "!commands","!neko","!shinobu","!megumin","!bully","!cuddle","!cry","!hug","!awoo","!kiss","!lick","!pat","!smug","!bonk","!yeet","!blush","!smile","!wave","!highfive","!handhold","!kick","!kill","!happy","!wink","!dance","!cringe"]
+commands = ["!waifu", "!commands","!neko","!shinobu","!megumin","!bully","!cuddle","!cry","!hug","!awoo","!kiss","!lick","!pat","!smug","!bonk","!yeet","!blush","!smile","!wave","!highfive","!handhold","!kick","!kill","!happy","!wink","!dance","!cringe", "!inmersion", "!inmersión"]
 custom_commands = []
 
 def manage_command(command, splittedMessage, context, update):
@@ -59,6 +59,7 @@ def manage_command(command, splittedMessage, context, update):
     if command == "!commands":
         available_commmands(context, update)
     if command == "!inmersion" or command == "!inmersión":
+        print(command)
         context.bot.send_photo(update.message.chat_id, photo=open('inmersion.jpg', 'rb'))
     return
 
