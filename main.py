@@ -20,9 +20,23 @@ def echo(update: Update, context: CallbackContext):
     if command_manager.is_command(possible_command[0]):
         command_manager.manage_command(possible_command[0], possible_command, context, update)
         return
-
+			
     handle_splitted_message(message, context, update)
-
+    check_entities(update.message.entities, context, update)
+    
+def check_entities(entities, context, update):
+		for entity in entities:
+				print(entity)
+				if entity.type == "text_link":
+						message = entity.url
+						if not url_utils.is_url(message.strip()):
+								print("not url")
+								continue
+						message = url_utils.get_url_from_shortener(message)
+						if youtube_utils.is_youtube_url(message):
+								youtube_utils.manage_youtube_vid(message, context, update)
+		return
+    
 def handle_splitted_message(full_message, context: CallbackContext, update: Update):        
     splitted_message = url_utils.formatTextToOneLine(full_message)
     splitted_message = splitted_message.split(" ")
@@ -39,7 +53,7 @@ def handle_banned_videos(message):
     return
 
 def main():
-    TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"
+    TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"    
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
