@@ -10,9 +10,6 @@ from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, Call
 def start(update, context):
     return
 
-def inmersion(update, context):
-    context.bot.send_photo(update.message.chat_id, photo=open('inmersion.jpg', 'rb'))
-
 def echo(update: Update, context: CallbackContext):
     message: str = update.message.text
     
@@ -56,8 +53,7 @@ def main():
     TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"    
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(CommandHandler('inmersion', inmersion))
+    dp.add_handler(CommandHandler('start', start))    
     echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
     dp.add_handler(echo_handler)
     updater.start_polling()

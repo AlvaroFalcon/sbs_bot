@@ -58,6 +58,8 @@ def manage_command(command, splittedMessage, context, update):
       waifu_manager.get_cringe(context, update)      
     if command == "!commands":
         available_commmands(context, update)
+    if command == "!inmersion" or command == "!inmersión":
+        context.bot.send_photo(update.message.chat_id, photo=open('inmersion.jpg', 'rb'))
     return
 
 def is_command(text: str):
