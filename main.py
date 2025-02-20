@@ -6,6 +6,10 @@ from url_utils import url_utils
 import urllib.parse
 from youtube_utils import youtube_utils
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 def start(update, context):
     return
@@ -50,7 +54,7 @@ def handle_banned_videos(message):
     return
 
 def main():
-    TOKEN = "5172660367:AAGMCcn3csrVk86PDM_liMwxcHlWRe5Z4so"    
+    TOKEN = os.getenv("TOKEN")    
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))    
